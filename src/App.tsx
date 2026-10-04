@@ -29,10 +29,16 @@ const MainLayout: React.FC = () => {
       </main>
 
       {/* Minimal Footer Note */}
-      <footer className="py-6 border-t border-neutral-900 text-center text-xs text-neutral-600">
-        <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>HerDay — Private, adaptive daily planner</span>
-          <span className="font-mono text-[11px] text-neutral-600">
+      <footer className="py-6 border-t border-neutral-900 text-xs text-neutral-500">
+        <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-2 gap-y-1">
+            <span className="text-neutral-400 font-medium">HerDay</span>
+            <span className="text-neutral-700 hidden sm:inline">•</span>
+            <span>Built for a Friend</span>
+            <span className="text-neutral-700 hidden sm:inline">•</span>
+            <span className="text-neutral-500">DEV Hacktoberfest 2026</span>
+          </div>
+          <span className="font-mono text-[11px] text-neutral-500">
             Understand → Plan → Complete → Replan
           </span>
         </div>

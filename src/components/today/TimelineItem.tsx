@@ -54,6 +54,7 @@ export const TimelineItem: React.FC<TimelineItemProps> = ({
       {/* Completion toggle button */}
       <button
         onClick={() => onToggleComplete(item.id)}
+        aria-label={isCompleted ? `Mark "${item.title}" as incomplete` : `Mark "${item.title}" as completed`}
         className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0 ${
           isCompleted
             ? 'bg-emerald-600 border-emerald-500 text-white'
@@ -79,7 +80,7 @@ export const TimelineItem: React.FC<TimelineItemProps> = ({
             {item.priority && <PriorityBadge priority={item.priority} />}
             {item.isFixedTime && (
               <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-400 border border-neutral-700/60">
-                Fixed
+                Fixed Commitment
               </span>
             )}
           </div>
@@ -89,7 +90,7 @@ export const TimelineItem: React.FC<TimelineItemProps> = ({
         <div className="flex items-center justify-between mt-1 text-xs text-neutral-500">
           <div className="flex items-center space-x-3">
             {item.deadlineNotice && (
-              <span className="flex items-center space-x-1 text-amber-400/80">
+              <span className="flex items-center space-x-1 text-amber-400/90 font-medium">
                 <Clock size={12} />
                 <span>{item.deadlineNotice}</span>
               </span>
@@ -99,10 +100,11 @@ export const TimelineItem: React.FC<TimelineItemProps> = ({
           {!isCompleted && (
             <button
               onClick={() => onMarkDelayed(item)}
-              className="opacity-0 group-hover:opacity-100 text-[11px] text-neutral-400 hover:text-amber-400 flex items-center space-x-1 transition-opacity px-2 py-0.5 rounded hover:bg-neutral-800/80"
+              aria-label={`Report delay or reschedule "${item.title}"`}
+              className="opacity-90 sm:opacity-0 sm:group-hover:opacity-100 text-[11px] text-neutral-400 hover:text-amber-400 flex items-center space-x-1 transition-opacity px-2 py-0.5 rounded hover:bg-neutral-800/80"
               title="Reschedule or report delay"
             >
-              <AlertTriangle size={11} />
+              <AlertTriangle size={11} className="text-amber-500/80" />
               <span>Report delay</span>
             </button>
           )}

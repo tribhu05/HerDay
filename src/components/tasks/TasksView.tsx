@@ -126,6 +126,7 @@ export const TasksView: React.FC = () => {
                 <div className="flex items-center space-x-3 min-w-0">
                   <button
                     onClick={() => handleToggleComplete(task)}
+                    aria-label={isCompleted ? `Mark "${task.title}" as incomplete` : `Mark "${task.title}" as completed`}
                     className={`w-5 h-5 rounded flex items-center justify-center border transition-colors shrink-0 ${
                       isCompleted
                         ? 'bg-emerald-600 border-emerald-500 text-white'
@@ -167,6 +168,7 @@ export const TasksView: React.FC = () => {
                   <PriorityBadge priority={task.priority} />
                   <button
                     onClick={() => setSelectedTask(task)}
+                    aria-label={`Edit task "${task.title}"`}
                     className="p-1.5 text-neutral-500 hover:text-neutral-300 rounded-md hover:bg-neutral-800 transition-colors"
                     title="Edit task"
                   >

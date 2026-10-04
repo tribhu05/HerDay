@@ -11,9 +11,22 @@ interface TellHerDayViewProps {
 }
 
 const EXAMPLE_PROMPTS = [
-  "I have my DBMS exam Friday. I need to finish two chapters and submit my assignment Thursday. I also have class tomorrow at 10.",
-  "Need to prepare slides for the sprint review this afternoon at 3pm, review 2 PRs, and do a quick workout.",
-  "Finish writing chapter 1 and 2, submit the budget proposal before 5pm, and take a 30m break.",
+  {
+    category: "Exam & Prep",
+    text: "Finish my ML assignment tomorrow, study chapters 3 and 4 tonight, and I have class tomorrow at 10.",
+  },
+  {
+    category: "Fixed Commitments",
+    text: "I have class at 10 and a meeting at 4, need to finish slides before then and take a 20m break.",
+  },
+  {
+    category: "Reschedule / Delay",
+    text: "I missed my 2pm assignment, move things around and protect my evening study session.",
+  },
+  {
+    category: "Coursework Rush",
+    text: "I have my DBMS exam Friday, need to finish two chapters, and submit problem set 4 Thursday.",
+  },
 ];
 
 export const TellHerDayView: React.FC<TellHerDayViewProps> = ({ onPlanConfirmed }) => {
@@ -32,6 +45,7 @@ export const TellHerDayView: React.FC<TellHerDayViewProps> = ({ onPlanConfirmed 
   const [inputVal, setInputVal] = useState('');
   const [voiceState, setVoiceState] = useState<VoiceRecordingState>('idle');
   const [voiceError, setVoiceError] = useState<string | null>(null);
+  const [voiceSuccessNotice, setVoiceSuccessNotice] = useState<boolean>(false);
   const voiceServiceRef = useRef<VoiceService | null>(null);
 
   useEffect(() => {
@@ -43,6 +57,7 @@ export const TellHerDayView: React.FC<TellHerDayViewProps> = ({ onPlanConfirmed 
 
   const handleStartRecording = async () => {
     setVoiceError(null);
+    setVoiceSuccessNotice(false);
     clearError();
     if (!voiceServiceRef.current) {
       voiceServiceRef.current = new VoiceService();
@@ -65,6 +80,7 @@ export const TellHerDayView: React.FC<TellHerDayViewProps> = ({ onPlanConfirmed 
       const result = await voiceServiceRef.current.transcribeAudio(audioBlob);
       if (result.text) {
         setInputVal(prev => (prev.trim() ? `${prev.trim()} ${result.text}` : result.text));
+        setVoiceSuccessNotice(true);
       }
       setVoiceState('idle');
     } catch (err: unknown) {
@@ -98,6 +114,7 @@ export const TellHerDayView: React.FC<TellHerDayViewProps> = ({ onPlanConfirmed 
 
   const handleSelectExample = (promptText: string) => {
     setInputVal(promptText);
+    setVoiceSuccessNotice(false);
     clearError();
   };
 
@@ -118,23 +135,29 @@ export const TellHerDayView: React.FC<TellHerDayViewProps> = ({ onPlanConfirmed 
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8 py-4">
-      {/* Intro */}
+    <div className="max-w-2xl mx-auto space-y-6 py-2">
+      {/* Intro & Architectural Boundary */}
       <div className="space-y-2">
-        <div className="inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-xs text-neutral-400">
-          <Cpu size={12} className="text-neutral-500" />
-          <span>
-            {preferences.activeAIProvider === 'heuristic'
-              ? 'Local Heuristic Engine (deterministic rule-based)'
-              : 'Gemma Open-Weight Provider'}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-xs text-neutral-300">
+            <Cpu size={12} className="text-neutral-400" />
+            <span className="font-medium">
+              {preferences.activeAIProvider === 'heuristic'
+                ? 'Local Heuristic Engine (Offline / Deterministic)'
+                : 'Local Gemma 2B (On-Device Inference)'}
+            </span>
+          </div>
+
+          <span className="text-[11px] px-2.5 py-1 rounded-full bg-neutral-900/60 border border-neutral-800/60 text-neutral-400 font-mono">
+            Gemma understands. HerDay decides.
           </span>
         </div>
 
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-          Tell HerDay
+          What do you need to get done?
         </h1>
-        <p className="text-sm text-neutral-400">
-          Express what you need to achieve in natural language. HerDay extracts actionable tasks, respects your deadlines, and builds a realistic schedule.
+        <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+          Tell HerDay what is on your mind. Speak or write naturally — HerDay extracts commitments, respects your deadlines, and always lets you review before scheduling.
         </p>
       </div>
 
@@ -182,6 +205,22 @@ export const TellHerDayView: React.FC<TellHerDayViewProps> = ({ onPlanConfirmed 
         </div>
       )}
 
+      {/* Voice Success Transcription Notice */}
+      {voiceSuccessNotice && (
+        <div className="p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-800/50 flex items-center justify-between text-xs text-emerald-300">
+          <span className="truncate">
+            ✓ Transcribed via ElevenLabs Scribe. You can review or edit the text before planning.
+          </span>
+          <button
+            type="button"
+            onClick={() => setVoiceSuccessNotice(false)}
+            className="text-emerald-400 hover:text-emerald-200 ml-2 text-[11px]"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Main Command Input Card */}
       <div className="p-5 rounded-2xl bg-[#14161e] border border-neutral-800/90 shadow-xl focus-within:border-neutral-700 transition-colors">
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -193,9 +232,10 @@ export const TellHerDayView: React.FC<TellHerDayViewProps> = ({ onPlanConfirmed 
             }}
             onKeyDown={handleKeyDown}
             rows={5}
-            placeholder="Tell me what's on your mind... (or use Speak)"
+            placeholder="Tell me what's on your mind... e.g. 'Finish ML assignment tomorrow, study chapters 3 and 4 tonight, and class at 10'"
             className="w-full bg-transparent text-sm sm:text-base text-neutral-100 placeholder-neutral-500 resize-none focus:outline-none leading-relaxed"
             autoFocus
+            aria-label="Describe tasks and commitments in natural language"
           />
 
           <div className="flex items-center justify-between pt-3 border-t border-neutral-800/70">
@@ -208,10 +248,11 @@ export const TellHerDayView: React.FC<TellHerDayViewProps> = ({ onPlanConfirmed 
                       type="button"
                       onClick={handleStartRecording}
                       disabled={isExtracting}
+                      aria-label="Speak natural thoughts using ElevenLabs Scribe speech-to-text"
                       className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 hover:border-neutral-700 text-xs text-neutral-300 hover:text-white transition-all active:scale-95 shadow-sm"
-                      title="Speak into microphone"
+                      title="Speak naturally (ElevenLabs Scribe STT)"
                     >
-                      <Mic size={13} className="text-neutral-400" />
+                      <Mic size={13} className="text-rose-400" />
                       <span>Speak</span>
                     </button>
                   )}
@@ -221,6 +262,7 @@ export const TellHerDayView: React.FC<TellHerDayViewProps> = ({ onPlanConfirmed 
                       <button
                         type="button"
                         onClick={handleStopRecording}
+                        aria-label="Stop recording and transcribe speech"
                         className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-rose-950/80 hover:bg-rose-900/90 border border-rose-800 text-xs text-rose-200 font-medium transition-all shadow-sm"
                         title="Click to finish speaking"
                       >
@@ -236,6 +278,7 @@ export const TellHerDayView: React.FC<TellHerDayViewProps> = ({ onPlanConfirmed 
                       <button
                         type="button"
                         onClick={handleCancelRecording}
+                        aria-label="Cancel voice recording"
                         className="p-1.5 rounded-lg text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800 transition-colors"
                         title="Cancel recording"
                       >
@@ -247,7 +290,7 @@ export const TellHerDayView: React.FC<TellHerDayViewProps> = ({ onPlanConfirmed 
                   {voiceState === 'processing' && (
                     <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-neutral-900 border border-neutral-800 text-xs text-neutral-400">
                       <div className="w-3 h-3 border-2 border-neutral-600 border-t-neutral-300 rounded-full animate-spin" />
-                      <span>Transcribing...</span>
+                      <span>Transcribing audio...</span>
                     </div>
                   )}
                 </div>
@@ -292,25 +335,32 @@ export const TellHerDayView: React.FC<TellHerDayViewProps> = ({ onPlanConfirmed 
       </div>
 
       {/* Helper / Example Prompts */}
-      <div className="space-y-3 pt-2">
+      <div className="space-y-3 pt-1">
         <div className="flex items-center space-x-1.5 text-xs font-medium uppercase tracking-wider text-neutral-500">
           <Info size={13} />
           <span>Try an example</span>
         </div>
 
-        <div className="space-y-2">
-          {EXAMPLE_PROMPTS.map((promptText, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {EXAMPLE_PROMPTS.map((item, idx) => (
             <button
               key={idx}
               type="button"
-              onClick={() => handleSelectExample(promptText)}
-              className="w-full text-left p-3 rounded-xl bg-neutral-900/40 hover:bg-neutral-900/90 border border-neutral-800/60 hover:border-neutral-700/80 text-xs text-neutral-300 transition-all flex items-start justify-between gap-3 group"
+              onClick={() => handleSelectExample(item.text)}
+              className="text-left p-3 rounded-xl bg-neutral-900/40 hover:bg-neutral-900/90 border border-neutral-800/60 hover:border-neutral-700 text-xs text-neutral-300 transition-all flex flex-col justify-between gap-1.5 group"
             >
-              <span className="line-clamp-2 leading-relaxed">"{promptText}"</span>
-              <CornerDownLeft
-                size={13}
-                className="opacity-0 group-hover:opacity-100 text-neutral-400 shrink-0 mt-0.5 transition-opacity"
-              />
+              <div className="flex items-center justify-between w-full">
+                <span className="text-[10px] uppercase font-semibold text-neutral-500 font-mono tracking-wider">
+                  {item.category}
+                </span>
+                <CornerDownLeft
+                  size={12}
+                  className="opacity-0 group-hover:opacity-100 text-neutral-400 shrink-0 transition-opacity"
+                />
+              </div>
+              <span className="line-clamp-2 text-neutral-300 text-[11px] leading-relaxed">
+                "{item.text}"
+              </span>
             </button>
           ))}
         </div>

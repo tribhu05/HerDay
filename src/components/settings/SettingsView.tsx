@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { usePlanner } from '../../context/PlannerContext';
 import type { UserPreferences } from '../../types/preferences';
-import { Cpu, RotateCcw, Check, Clock, Coffee, Globe, Mic, Database } from 'lucide-react';
+import { Cpu, RotateCcw, Check, Clock, Coffee, Globe, Mic, Database, ShieldCheck } from 'lucide-react';
 import type { GemmaConnectionCheckResult } from '../../services/ai/gemmaProvider';
 import type { VoiceStatusResponse } from '../../services/voice/voiceTypes';
 import type { MongoDbStatus } from '../../services/storage/cloudStorageService';
@@ -612,6 +612,42 @@ export const SettingsView: React.FC = () => {
               <p className="text-[10px] text-neutral-500 pt-0.5">
                 Configure <code className="text-neutral-300 bg-neutral-900 px-1 py-0.5 rounded border border-neutral-800">MONGODB_URI</code> in <code className="text-neutral-300 bg-neutral-900 px-1 py-0.5 rounded border border-neutral-800">.env</code>. When MongoDB is unavailable or unconfigured, HerDay automatically operates locally with zero interruption.
               </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Privacy Architecture Summary */}
+        <div className="p-5 rounded-2xl bg-[#14161e] border border-neutral-800 space-y-3">
+          <div className="flex items-center space-x-2 text-sm font-semibold text-neutral-200">
+            <ShieldCheck size={16} className="text-emerald-400" />
+            <span>Privacy Architecture & Data Boundaries</span>
+          </div>
+
+          <p className="text-xs text-neutral-400 leading-relaxed">
+            HerDay is architected so your private schedule and thoughts never have to leave your machine.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
+            <div className="p-3 rounded-xl bg-neutral-900/60 border border-neutral-800/80 space-y-1">
+              <span className="font-semibold text-emerald-400 block text-[11px] uppercase tracking-wider font-mono">
+                Stays Strictly On-Device
+              </span>
+              <ul className="text-neutral-400 text-[11px] space-y-1 list-disc pl-3.5">
+                <li>Local Gemma 2B model inference via Ollama</li>
+                <li>Deterministic scheduling and replanning logic</li>
+                <li>Default task storage and plan history (localStorage)</li>
+                <li>Personal working hours and break constraints</li>
+              </ul>
+            </div>
+
+            <div className="p-3 rounded-xl bg-neutral-900/60 border border-neutral-800/80 space-y-1">
+              <span className="font-semibold text-blue-400 block text-[11px] uppercase tracking-wider font-mono">
+                External Services (Optional Only)
+              </span>
+              <ul className="text-neutral-400 text-[11px] space-y-1 list-disc pl-3.5">
+                <li>ElevenLabs Scribe: Only used when microphone is clicked (transcription only; server-side proxy)</li>
+                <li>MongoDB Atlas: Only used if MONGODB_URI is provided in .env (secrets never stored in database)</li>
+              </ul>
             </div>
           </div>
         </div>

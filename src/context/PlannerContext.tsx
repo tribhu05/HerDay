@@ -11,6 +11,7 @@ import type { GemmaConnectionCheckResult } from '../services/ai/gemmaProvider';
 import { ElevenLabsProvider } from '../services/voice/elevenLabsProvider';
 import type { VoiceStatusResponse } from '../services/voice/voiceTypes';
 import { CloudStorageService, type MongoDbStatus } from '../services/storage/cloudStorageService';
+import { INITIAL_TASKS, INITIAL_PLAN } from '../services/storage/defaultData';
 
 interface PlannerContextType {
   tasks: Task[];
@@ -44,6 +45,8 @@ interface PlannerContextType {
   checkVoiceConnection: () => Promise<VoiceStatusResponse>;
   checkDbStatus: () => Promise<MongoDbStatus>;
   migrateLocalDataToCloud: () => Promise<{ success: boolean; message: string }>;
+  loadFriendScenario: () => void;
+  clearAllTasks: () => void;
   resetAllData: () => void;
   clearError: () => void;
 }
@@ -351,6 +354,27 @@ export const PlannerProvider: React.FC<{ children: React.ReactNode }> = ({ child
     cloudStorage.savePreferences(newPrefs).catch(() => {});
   };
 
+  const loadFriendScenario = () => {
+    setTasks(INITIAL_TASKS);
+    setActivePlan(INITIAL_PLAN);
+    LocalStorageService.saveTasks(INITIAL_TASKS);
+    LocalStorageService.saveActivePlan(INITIAL_PLAN);
+  };
+
+  const clearAllTasks = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const emptyPlan: Plan = {
+      id: `plan-${today}`,
+      date: today,
+      generatedAt: new Date().toISOString(),
+      items: [],
+    };
+    setTasks([]);
+    setActivePlan(emptyPlan);
+    LocalStorageService.saveTasks([]);
+    LocalStorageService.saveActivePlan(emptyPlan);
+  };
+
   const resetAllData = () => {
     LocalStorageService.resetAll();
     window.location.reload();
@@ -415,6 +439,8 @@ export const PlannerProvider: React.FC<{ children: React.ReactNode }> = ({ child
         checkVoiceConnection,
         checkDbStatus,
         migrateLocalDataToCloud,
+        loadFriendScenario,
+        clearAllTasks,
         resetAllData,
         clearError,
       }}

@@ -48,6 +48,9 @@ export const Modal: React.FC<ModalProps> = ({
 
       {/* Modal Card */}
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
         className={`relative w-full ${maxWidthClasses} bg-[#13151b] border border-neutral-800 rounded-xl shadow-2xl overflow-hidden z-10`}
       >
         <div className="flex items-start justify-between px-6 pt-5 pb-4 border-b border-neutral-800/80">
@@ -59,6 +62,7 @@ export const Modal: React.FC<ModalProps> = ({
           </div>
           <button
             onClick={onClose}
+            aria-label="Close dialog"
             className="text-neutral-400 hover:text-neutral-200 p-1 rounded-md hover:bg-neutral-800/60 transition-colors"
           >
             <X size={18} />

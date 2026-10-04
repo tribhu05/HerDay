@@ -27,6 +27,8 @@ export const TodayView: React.FC<TodayViewProps> = ({ onNavigateToTell }) => {
     submitMissedFeedbackAndReplan,
     triggerManualReplan,
     dismissReplanExplanation,
+    loadFriendScenario,
+    clearAllTasks,
   } = usePlanner();
 
   // Dynamic greeting based on time of day
@@ -58,33 +60,49 @@ export const TodayView: React.FC<TodayViewProps> = ({ onNavigateToTell }) => {
       {/* Top Banner & Greeting */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-neutral-800/80">
         <div>
-          <div className="text-xs font-medium uppercase tracking-wider text-neutral-500 mb-1">
-            {todayFormatted}
+          <div className="flex items-center space-x-2 text-xs font-medium uppercase tracking-wider text-neutral-500 mb-1">
+            <span>{todayFormatted}</span>
+            <span className="text-neutral-700">•</span>
+            <span className="text-neutral-400 capitalize">Deterministic Daily Plan</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
             {greeting}
           </h1>
           <p className="text-xs text-neutral-400 mt-1">
             {taskItems.length === 0
-              ? 'No schedule planned for today yet.'
-              : `${completedCount} of ${taskItems.length} tasks completed (${progressPercent}%).`}
+              ? 'No schedule planned for today yet. Express your thoughts or load a sample scenario.'
+              : `${completedCount} of ${taskItems.length} commitments completed (${progressPercent}%). HerDay protects your breaks and deadlines.`}
           </p>
         </div>
 
         {/* Quick Actions */}
-        <div className="flex items-center space-x-2 shrink-0">
-          <button
-            onClick={triggerManualReplan}
-            className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:text-white hover:border-neutral-700 transition-colors"
-            title="Adapt schedule for unexpected changes"
-          >
-            <RefreshCw size={13} className="text-neutral-400" />
-            <span>Replan day</span>
-          </button>
+        <div className="flex items-center space-x-2 shrink-0 flex-wrap gap-y-2">
+          {taskItems.length > 0 ? (
+            <button
+              onClick={triggerManualReplan}
+              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:text-white hover:border-neutral-700 transition-colors"
+              title="Recalculate remaining schedule deterministically"
+              aria-label="Replan day"
+            >
+              <RefreshCw size={13} className="text-neutral-400" />
+              <span>Replan day</span>
+            </button>
+          ) : (
+            <button
+              onClick={loadFriendScenario}
+              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:text-white hover:border-neutral-700 transition-colors"
+              title="Load the real student exam week sample scenario"
+              aria-label="Load Exam Week Scenario"
+            >
+              <Sparkles size={13} className="text-amber-400" />
+              <span>Load Friend Scenario</span>
+            </button>
+          )}
 
           <button
             onClick={onNavigateToTell}
             className="flex items-center space-x-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-neutral-100 text-neutral-950 hover:bg-white transition-colors shadow-sm"
+            aria-label="Tell HerDay what to plan"
           >
             <Sparkles size={13} />
             <span>Tell HerDay</span>
@@ -94,7 +112,7 @@ export const TodayView: React.FC<TodayViewProps> = ({ onNavigateToTell }) => {
 
       {/* Progress line */}
       {taskItems.length > 0 && (
-        <div className="w-full bg-neutral-900 rounded-full h-1 overflow-hidden">
+        <div className="w-full bg-neutral-900 rounded-full h-1 overflow-hidden" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100}>
           <div
             className="bg-emerald-500 h-1 transition-all duration-300 ease-out"
             style={{ width: `${progressPercent}%` }}
@@ -106,7 +124,7 @@ export const TodayView: React.FC<TodayViewProps> = ({ onNavigateToTell }) => {
       {replanNeeded && (
         <ReplanBanner
           onReplan={triggerManualReplan}
-          reasonText="Your plan needs an adjustment."
+          reasonText="Your plan needs an adjustment. An earlier commitment ran over."
         />
       )}
 
@@ -118,25 +136,45 @@ export const TodayView: React.FC<TodayViewProps> = ({ onNavigateToTell }) => {
             <span>Today's Schedule</span>
           </div>
 
-          <span className="text-[11px] font-normal lowercase tracking-normal text-neutral-500">
-            working hours {preferences.workingHours.startTime} – {preferences.workingHours.endTime}
-          </span>
+          <div className="flex items-center space-x-3 text-[11px] font-normal lowercase tracking-normal text-neutral-500">
+            <span>
+              working hours {preferences.workingHours.startTime} – {preferences.workingHours.endTime}
+            </span>
+            {taskItems.length > 0 && (
+              <button
+                onClick={clearAllTasks}
+                className="text-neutral-500 hover:text-neutral-300 transition-colors"
+                title="Clear schedule to blank canvas"
+              >
+                clear
+              </button>
+            )}
+          </div>
         </div>
 
         {activePlan.items.length === 0 ? (
-          <div className="text-center py-12 px-4 rounded-xl border border-dashed border-neutral-800 bg-[#121319]/40">
-            <CalendarCheck size={28} className="mx-auto text-neutral-600 mb-3" />
-            <h3 className="text-sm font-medium text-neutral-300">Nothing scheduled for today</h3>
-            <p className="text-xs text-neutral-500 max-w-sm mx-auto mt-1 mb-4">
-              Speak or write naturally about what you need to get done, and HerDay will assemble a calm timeline.
+          <div className="text-center py-12 px-4 rounded-2xl border border-dashed border-neutral-800 bg-[#121319]/40 space-y-3">
+            <CalendarCheck size={32} className="mx-auto text-neutral-500" />
+            <h3 className="text-sm font-semibold text-neutral-200">Nothing scheduled for today</h3>
+            <p className="text-xs text-neutral-400 max-w-md mx-auto leading-relaxed">
+              HerDay was built for a friend overwhelmed by rigid calendars. Speak or type messy thoughts naturally, and HerDay will turn them into a calm, realistic day.
             </p>
-            <button
-              onClick={onNavigateToTell}
-              className="inline-flex items-center space-x-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-neutral-100 text-neutral-950 hover:bg-white transition-colors"
-            >
-              <Plus size={13} />
-              <span>Plan my day</span>
-            </button>
+            <div className="flex items-center justify-center space-x-3 pt-2">
+              <button
+                onClick={onNavigateToTell}
+                className="inline-flex items-center space-x-1.5 px-4 py-2 text-xs font-semibold rounded-lg bg-neutral-100 text-neutral-950 hover:bg-white transition-colors shadow-sm"
+              >
+                <Plus size={13} />
+                <span>Tell HerDay</span>
+              </button>
+              <button
+                onClick={loadFriendScenario}
+                className="inline-flex items-center space-x-1.5 px-3.5 py-2 text-xs font-medium rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300 hover:text-white hover:border-neutral-700 transition-colors"
+              >
+                <Sparkles size={13} className="text-amber-400" />
+                <span>Preview Exam Week Scenario</span>
+              </button>
+            </div>
           </div>
         ) : (
           <div className="divide-y divide-transparent">

@@ -86,11 +86,14 @@ export const ExtractedTasksReview: React.FC<ExtractedTasksReviewProps> = ({
         )}
 
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-white">
-            Tasks HerDay Understood
-          </h2>
+          <div className="flex items-center space-x-2">
+            <span className="text-emerald-400 font-bold text-lg">✓</span>
+            <h2 className="text-xl font-bold tracking-tight text-white">
+              I understood these commitments:
+            </h2>
+          </div>
           <p className="text-xs text-neutral-400 mt-1">
-            Review, adjust durations or deadlines, and confirm before HerDay schedules your day.
+            Review or adjust durations, priorities, and deadlines below. HerDay never silently creates calendar commitments from AI output.
           </p>
         </div>
       </div>
@@ -98,7 +101,7 @@ export const ExtractedTasksReview: React.FC<ExtractedTasksReviewProps> = ({
       {tasks.length === 0 ? (
         <div className="p-8 text-center rounded-xl bg-neutral-900/50 border border-neutral-800 text-neutral-400">
           <ShieldAlert size={28} className="mx-auto text-neutral-500 mb-2" />
-          <p className="text-sm">No tasks identified.</p>
+          <p className="text-sm">No tasks identified from input.</p>
           <button
             onClick={handleAddNewTask}
             className="mt-3 px-3 py-1.5 text-xs font-medium rounded-lg bg-neutral-800 text-neutral-200 hover:bg-neutral-700"
@@ -111,21 +114,26 @@ export const ExtractedTasksReview: React.FC<ExtractedTasksReviewProps> = ({
           {tasks.map((task) => (
             <div
               key={task.id}
-              className="p-4 rounded-xl bg-[#14161d] border border-neutral-800/80 space-y-3"
+              className="p-4 rounded-xl bg-[#14161d] border border-neutral-800/80 space-y-3 shadow-sm hover:border-neutral-700/80 transition-colors"
             >
               <div className="flex items-start justify-between gap-3">
-                <input
-                  type="text"
-                  value={task.title}
-                  onChange={e => handleUpdateTask(task.id, { title: e.target.value })}
-                  placeholder="Task title"
-                  className="w-full text-sm font-semibold bg-transparent border-b border-transparent hover:border-neutral-700 focus:border-neutral-500 focus:outline-none text-neutral-100 py-0.5"
-                />
+                <div className="flex items-center space-x-2.5 flex-1 min-w-0">
+                  <span className="text-emerald-400 font-bold text-sm shrink-0">✓</span>
+                  <input
+                    type="text"
+                    value={task.title}
+                    onChange={e => handleUpdateTask(task.id, { title: e.target.value })}
+                    placeholder="Task title"
+                    aria-label="Task title"
+                    className="w-full text-sm font-semibold bg-transparent border-b border-transparent hover:border-neutral-700 focus:border-neutral-500 focus:outline-none text-neutral-100 py-0.5"
+                  />
+                </div>
 
                 <button
                   onClick={() => handleRemoveTask(task.id)}
                   className="text-neutral-500 hover:text-red-400 p-1 rounded transition-colors shrink-0"
                   title="Remove task"
+                  aria-label={`Remove task "${task.title}"`}
                 >
                   <Trash2 size={14} />
                 </button>

@@ -21,13 +21,16 @@ export const ReplanExplanationModal: React.FC<ReplanExplanationModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Plan Adapted"
-      subtitle="Here is how HerDay adjusted your schedule"
+      title="Schedule Updated"
+      subtitle="HerDay's deterministic replanner adapted your remaining day"
       maxWidth="md"
     >
       <div className="space-y-4">
         {/* Core summary banner */}
-        <div className="p-3.5 rounded-lg bg-neutral-900 border border-neutral-800 text-sm font-medium text-neutral-200 leading-relaxed">
+        <div className="p-3.5 rounded-xl bg-neutral-900/90 border border-neutral-800 text-sm font-medium text-neutral-100 leading-relaxed shadow-sm">
+          <div className="text-[10px] uppercase font-mono font-semibold text-amber-400 mb-1 tracking-wider">
+            Adaptive Replan Result
+          </div>
           {explanation.summary}
         </div>
 
