@@ -1,152 +1,240 @@
-# HerDay
+<div align="center">
 
-A private, adaptive daily planner that transforms messy thoughts into realistic, sustainable schedules.
+# 🌸 HerDay
 
-> **"Tell HerDay what is on your mind. HerDay turns it into a realistic day."**
+### *A Private, Adaptive Daily Planner Built for Someone I Care About*
 
-[![Built for Hacktoberfest 2026](https://img.shields.io/badge/DEV_Community-Hacktoberfest_2026-ff7a00.svg)](https://dev.to)
-[![Model](https://img.shields.io/badge/AI_Engine-Gemma_2B_(Open--Weight)-4285F4.svg)](https://ai.google.dev/gemma)
-[![Voice STT](https://img.shields.io/badge/Voice_STT-ElevenLabs_Scribe_(v2)-10b981.svg)](https://elevenlabs.io)
-[![Persistence](https://img.shields.io/badge/Storage-MongoDB_Atlas_%2F_Local--First-47A248.svg)](https://www.mongodb.com/atlas)
+**Transforming messy, anxious thoughts into calm, realistic, and sustainable days.**
+
+<br />
+
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?style=for-the-badge)](package.json)
+[![DEV Community Hacktoberfest 2026](https://img.shields.io/badge/DEV_Community-Hacktoberfest_2026-ff7a00.svg?style=for-the-badge)](https://dev.to)
+[![AI Engine](https://img.shields.io/badge/AI_Engine-Gemma_2B_(Open--Weight)-4285F4.svg?style=for-the-badge)](https://ai.google.dev/gemma)
+[![Voice STT](https://img.shields.io/badge/Voice_STT-ElevenLabs_Scribe_(v2)-10b981.svg?style=for-the-badge)](https://elevenlabs.io)
+[![Database](https://img.shields.io/badge/Storage-MongoDB_Atlas_%2F_Local--First-47A248.svg?style=for-the-badge)](https://www.mongodb.com/atlas)
+[![License](https://img.shields.io/badge/License-MIT-purple.svg?style=for-the-badge)](LICENSE)
+
+<br />
+
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tribhu05/HerDay)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+<br />
+
+> *"Tell HerDay what is on your mind. HerDay turns it into a realistic day."*
 
 ---
 
-## Built For Someone I Care About
+</div>
 
-HerDay was built for **Ananya**, a close friend and engineering student who experiences severe cognitive fatigue and executive overload during exam season.
+## 📑 Table of Contents
 
-Like many ambitious students with intense workloads, Ananya's brain does not think in neat 30-minute calendar blocks. Her mind processes commitments as messy, interwoven streams of urgency:
-> *"I have my DBMS final Friday, need to finish two chapters of indexing, submit problem set 4 before Thursday, and I have distributed systems lecture tomorrow at 10."*
-
-When she tries using traditional productivity tools, they break down within hours:
-* **Rigid Calendar Blockers** force her into micromanaging timestamps, leading to decision paralysis before she even begins studying.
-* **Guilt-Driven Todo Lists** pile up endlessly with red overdue badges when a single morning session runs 45 minutes over.
-* **Cloud AI Assistants** claim to "organize your life" but send deeply personal study routines, journal notes, and private thoughts to opaque corporate cloud servers.
-
-HerDay was built as a gift for her: an empathetic companion that listens to messy language, extracts structured tasks, schedules them realistically around her actual commitments, and **calmly adapts the schedule when life inevitably happens—with zero guilt.**
-
----
-
-## The Problem
-
-Traditional productivity software assumes humans are deterministic machines with predictable schedules. In reality:
-
-1. **Messy Thoughts**: Real tasks enter our minds as unstructured stream-of-consciousness, not pre-sorted database rows.
-2. **Fragile Plans**: If a task scheduled from 10:00 to 11:00 takes until 11:45, the entire day's schedule collapses into cascading delays.
-3. **Overlooked Breaks**: People chronically underestimate cognitive fatigue, skipping restorative rest until burnout strikes.
-4. **Privacy Concerns**: Daily planners hold our most vulnerable personal context: when we wake up, where we have class, and what causes us stress.
-
----
-
-## The Solution
-
-HerDay solves this through an intentional separation of concerns:
-
-> **"Gemma understands. HerDay decides."**
-
-* **Open-Weight Gemma (or Local Heuristic Engine)** parses unstructured speech and text into validated task definitions, extracting explicit deadlines, fixed constraints, and realistic effort estimates.
-* **Deterministic Application Engine** calculates the actual time slots, locks non-negotiable commitments, enforces working-hour boundaries, and inserts mandatory 15-minute breaks every 90 minutes.
-* **Adaptive Replanning Engine** recalculates remaining afternoon hours whenever a task runs long or a disruption occurs, preserving hard deadlines while eliminating guilt.
-* **Review-First Guardrails**: AI suggestions are never silently inserted into the calendar. The user inspects and confirms everything first.
+- [The Story: Built for Ananya](#-the-story-built-for-ananya)
+- [The Problem with Traditional Productivity](#-the-problem-with-traditional-productivity)
+- [The Solution & Core Philosophy](#-the-solution--core-philosophy)
+- [Comparison: Traditional Apps vs. HerDay](#-comparison-traditional-apps-vs-herday)
+- [System Architecture & Dataflow](#-system-architecture--dataflow)
+- [Why Open-Source AI (Gemma 2B)?](#-why-open-source-ai-gemma-2b)
+- [Key Features](#-key-features)
+- [Privacy & Data Sovereignty Matrix](#-privacy--data-sovereignty-matrix)
+- [Technology Stack](#-technology-stack)
+- [Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#1-clone--install)
+  - [Local AI Setup (Ollama + Gemma 2B)](#2-start-local-gemma-model)
+  - [Environment Configuration](#3-environment-configuration)
+  - [Running the App](#4-run-development-server)
+- [Deployment Guide (Render)](#-deployment-guide-render)
+- [Testing & Quality Assurance](#-testing--quality-assurance)
+- [REST API Reference](#-rest-api-reference)
+- [🌐 Community Wisdom](#-community-wisdom)
+- [Contributing & License](#-contributing--license)
 
 ---
 
-## How It Works
+## 💌 The Story: Built for Ananya
 
-```text
-User Thought (Voice or Text)
-           │
-           ▼
-ElevenLabs Scribe STT (`scribe_v2`)  [Optional Voice Layer]
-           │
-           ▼
-Raw Natural Language Transcript
-           │
-           ▼
-Local Gemma 2B via Ollama  ──(Fallback)──►  Local Heuristic Engine
-           │
-           ▼
-Strict JSON Schema Validation
-           │
-           ▼
-User Review Screen  [Inspect, Edit, & Confirm]
-           │
-           ▼
-Deterministic Scheduler
-  ├── Locks fixed-time commitments (e.g. "Lecture at 14:00")
-  ├── Respects working hours (09:00 — 21:30)
-  └── Injects protected restorative breaks
-           │
-           ▼
-Active Day Timeline  ──►  Task Delay Reported?
+HerDay was created for **Ananya**, a close friend and engineering student who experiences severe cognitive fatigue and executive dysfunction during high-stakes university exam cycles.
+
+Like many ambitious students balancing demanding coursework, labs, and personal commitments, Ananya does not think in rigid 30-minute calendar blocks. When overwhelmed, her thoughts tumble out as an unfiltered stream of urgency:
+
+> *"I have my DBMS final Friday, need to finish two chapters of indexing, submit problem set 4 before Thursday, and I have distributed systems lecture tomorrow at 10. Also need to grocery shop and call my mom."*
+
+When she tried using standard productivity tools, the result was almost always burnout:
+* **Rigid Calendar Blockers** demanded tedious timestamp micromanagement, triggering decision paralysis before any studying began.
+* **Guilt-Driven Todo Lists** accumulated red overdue badges when a single morning session ran 45 minutes over, turning tools meant to help into sources of anxiety.
+* **Commercial Cloud AI Assistants** promised to "organize her life" but required transmitting deeply personal academic struggles, daily routines, and vulnerable thoughts to opaque corporate cloud servers.
+
+**HerDay is a gift built specifically for her:** an empathetic companion that listens to messy language, extracts structured commitments, arranges them realistically around her non-negotiables, and **calmly adapts the schedule when life inevitably happens—with zero guilt and 100% data privacy.**
+
+---
+
+## ⚡ The Problem with Traditional Productivity
+
+```
+┌─────────────────────────────────┐       ┌─────────────────────────────────┐
+│     The Human Reality           │  VS   │     Traditional Software        │
+├─────────────────────────────────┤       ├─────────────────────────────────┤
+│ • Messy, stream-of-consciousness│       │ • Requires rigid input forms    │
+│ • Unpredictable interruptions   │       │ • Cascading delay collapse      │
+│ • Cognitive fatigue & burnout   │       │ • Ignores human energy limits   │
+│ • Vulnerable personal context   │       │ • Cloud monetization & telemetry│
+└─────────────────────────────────┘       └─────────────────────────────────┘
+```
+
+1. **Unstructured Thinking vs. Rigid Forms**: Humans process urgency as emotional narratives, not pre-sorted database entries.
+2. **The Fragile Plan Trap**: If a 10:00 AM task takes until 11:45 AM, traditional calendar layouts break down into overlapping errors and guilt.
+3. **Rest Neglect**: High achievers consistently underestimate mental exhaustion, skipping restorative breaks until forced to stop by burnout.
+4. **Intrusive Cloud Telemetry**: A daily planner reflects our most private habits—when we wake up, where we study, and what stresses us out.
+
+---
+
+## 💡 The Solution & Core Philosophy
+
+HerDay is designed around an intentional architectural principle:
+
+<div align="center">
+
+### **"Gemma understands. HerDay decides."**
+
+</div>
+
+* **Probabilistic Understanding (Local Gemma 2B)**: Language models are exceptionally good at natural language comprehension, extracting deadlines, estimating effort, and identifying fixed constraints from conversational speech.
+* **Deterministic Scheduling (Pure TypeScript Engine)**: Language models should **never** be trusted with mathematical time allocation. HerDay hands extracted tasks to a deterministic constraint-satisfaction engine that guarantees no overlapping bookings, respects daily working hours, and injects protected rest periods.
+* **Guilt-Free Dynamic Replanning**: When a task overruns, one tap on *"Report Delay"* shifts downstream tasks, protects hard deadlines, and produces a calm, human explanation of what changed and why.
+* **Review-First Guardrails**: AI never silently inserts tasks into the schedule. The user always inspects, edits, and approves the extracted commitments first.
+
+---
+
+## ⚖️ Comparison: Traditional Apps vs. HerDay
+
+| Feature | Standard Calendar Apps | Todo / Task Lists | Cloud AI Planners | **HerDay** 🌸 |
+| :--- | :---: | :---: | :---: | :---: |
+| **Input Style** | Rigid modal dialogs | Linear checkbox items | Chatbot prompt | **Natural speech or free text** |
+| **Schedule Engine** | Manual drag-and-drop | None (manual sorting) | Stochastic LLM output | **Deterministic constraint solver** |
+| **When Tasks Run Over** | Collides & overflows | Red "Overdue" badges | Hallucinates new slots | **Calm, mathematical replanning** |
+| **Rest Protection** | Ignored | Ignored | Optional | **Mandatory 15m break / 90m work** |
+| **Model Hosting** | Cloud | N/A | Proprietary cloud APIs | **Local-First Open Weights (Gemma 2B)** |
+| **Offline Support** | Partial | Partial | None | **100% Offline (Local Heuristic Fallback)** |
+| **Storage Architecture** | Proprietary DB | Vendor Cloud | Vendor Cloud | **LocalStorage + MongoDB Atlas Sync** |
+
+---
+
+## 🏗️ System Architecture & Dataflow
+
+```
+                       [ User Thought Intake ]
+                      (Microphone / Text Input)
                                   │
                                   ▼
-                      Deterministic Replanner
-                        ├── Shifts downstream tasks
-                        ├── Protects hard deadlines
-                        └── Explains WHY the day changed
+                    [ Optional Voice Transcription ]
+                 ElevenLabs Scribe v2 Server-Side Proxy
+                       (Streaming Audio -> Text)
+                                  │
+                                  ▼
+                    [ Language Understanding Layer ]
+                   Local Gemma 2B via Ollama (`gemma2:2b`)
+                                  │
+                    (Fallback: Local Heuristic Regex Parser)
+                                  │
+                                  ▼
+                    [ Strict Schema Validation ]
+                      (JSON Extraction Guardrail)
+                                  │
+                                  ▼
+                     [ User Inspection & Review ]
+                   (Edit Title, Time, Priority, Tags)
+                                  │
+                                  ▼
+                  [ Deterministic Scheduler Engine ]
+       ┌──────────────────────────┴──────────────────────────┐
+       ▼                                                     ▼
+Fixed Commitments                              Floating Tasks & Breaks
+(Locked to explicit clock times)              (Sorted by priority & deadline)
+       │                                                     │
+       └──────────────────────────┬──────────────────────────┘
+                                  ▼
+                        [ Active Day Timeline ]
+                                  │
+                 Task Runs Over?  ▼  Need to Reschedule?
+                    [ Deterministic Replanner ]
+              • Recalculates remaining afternoon capacity
+              • Preserves non-negotiable hard deadlines
+              • Emits clear explanation with zero guilt
+                                  │
+                                  ▼
+                   [ Resilient Persistence Layer ]
+                      ┌───────────────────────┐
+                      │  Local-First Browser  │  (100% Offline)
+                      │     localStorage      │
+                      └───────────┬───────────┘
+                                  │ (Sync if configured)
+                                  ▼
+                      ┌───────────────────────┐
+                      │  MongoDB Atlas Cloud  │  (Secure multi-device sync)
+                      │    (Driver v7.7.0)    │
+                      └───────────────────────┘
 ```
 
 ---
 
-## Why Open-Source AI Matters
+## 🧠 Why Open-Source AI (Gemma 2B)?
 
-HerDay specifically chooses **open-weight Gemma models** (via Ollama or local inference) over closed, hosted API endpoints. This architectural choice is central to the product:
+HerDay explicitly uses **Google's open-weight Gemma 2B model** (via Ollama or local inference) rather than commercial cloud APIs:
 
-1. **On-Device Data Sovereignty**: A daily planner stores intimate personal data—daily routines, academic struggles, medical appointments, and private anxieties. Running Gemma locally ensures that messy thoughts never leave the user's laptop.
-2. **Zero Subscription Paywalls**: A student should not lose access to their personal daily planner because their monthly API credits expired or an external cloud endpoint had an outage.
-3. **Inspectable & Customisable**: Open weights allow local optimization, prompt tuning, and model swapping (e.g., `gemma2:2b` on lightweight laptops or `gemma2:9b` on workstations).
-4. **Resilient Offline Architecture**: If the local Gemma endpoint is unreachable or Ollama is stopped, HerDay immediately engages its built-in **Local Heuristic Engine** without crashing, ensuring unbroken productivity even on airplane Wi-Fi.
-
----
-
-## Key Features
-
-* **Natural Language Thought Capture**: Type or speak naturally. HerDay parses compound commitments, deadlines, and time constraints.
-* **Voice Thought Intake**: High-accuracy voice transcription powered by ElevenLabs Scribe (`scribe_v2`) with server-side proxy protection (API keys never touch the browser).
-* **Open-Weight Gemma 2B**: Local language understanding powered by Gemma via Ollama or any OpenAI-compatible local server.
-* **Human-in-the-Loop Review**: Extracted commitments are presented cleanly with duration, priority, and deadlines before entering the schedule.
-* **Deterministic Scheduling**: Pure mathematical scheduling logic places tasks into realistic slots, locks fixed commitments, and honors working hours.
-* **Protected Restorative Breaks**: Automatically reserves 15-minute breaks every 90 minutes to prevent burnout.
-* **Adaptive Replanning**: When a task runs over, report a delay with one click. HerDay shifts downstream tasks and clearly explains what changed and why.
-* **Local-First with Optional Cloud Sync**: Works 100% offline using `localStorage`. Optionally syncs across devices with MongoDB Atlas when configured.
-* **Zero Guilt UX**: No angry red badges or failure shaming. Unfinished tasks are calmly adapted into open slots.
+1. **On-Device Data Sovereignty**: Academic stress, daily habits, doctor appointments, and personal anxieties remain strictly on the user's laptop.
+2. **Zero Subscription Paywalls**: A student should never lose their daily organizer because their cloud API balance ran out or an external service suffered an outage.
+3. **Inspectable & Swappable**: Developers and users can run `gemma2:2b` on lightweight ultrabooks or upgrade to `gemma2:9b` on workstations without altering application logic.
+4. **Offline Resilience**: If Ollama is offline or unavailable, HerDay automatically fails over to its in-browser **Local Heuristic Rule Engine** without crashing, ensuring unbroken productivity.
 
 ---
 
-## Technical Architecture
+## ✨ Key Features
 
-| Layer | Technology | Role |
-| :--- | :--- | :--- |
-| **Frontend UI** | React 19, TypeScript, Tailwind CSS v4, Lucide Icons | Responsive, accessible, calm dark-mode interface |
-| **Language Understanding** | Google Gemma 2B via Ollama (`gemma2:2b`) | Task extraction, deadline inference, priority classification |
-| **Deterministic AI Fallback** | Local Heuristic Regex & Rule Engine | Offline fallback parser running in-browser |
-| **Speech-to-Text** | ElevenLabs Scribe API (`scribe_v2`) | Server-side proxied voice transcription |
-| **Scheduler & Replanner** | Pure TypeScript Algorithms | Deterministic constraint satisfaction & schedule adaptation |
-| **Persistence** | LocalStorage + MongoDB Atlas (Driver v7) | Local-first storage with optional cloud sync |
-| **Build & Dev Server** | Vite 8, Node.js | Fast local HMR & API proxy middleware |
-
----
-
-## Privacy: What Stays Local vs. What Leaves the Device
-
-| Data / Component | Location | Details |
-| :--- | :--- | :--- |
-| **Gemma Model Inference** | **Local (100% On-Device)** | Executes locally on your machine via Ollama. No personal notes sent to cloud LLMs. |
-| **Planner State & Tasks** | **Local (100% On-Device)** | Stored in browser `localStorage`. Works completely offline. |
-| **Voice Audio (Optional)** | **ElevenLabs API** | Audio is streamed to ElevenLabs solely for transcription if voice input is used. |
-| **Cloud Persistence (Optional)**| **MongoDB Atlas** | Only active if `MONGODB_URI` is supplied in `.env`. Credentials and API keys are strictly sanitized and never saved in the database. |
+* 🎙️ **Stream-of-Consciousness Voice Intake**: Speak freely. Powered by ElevenLabs Scribe (`scribe_v2`) with a secure server-side proxy (API keys are never sent to the browser).
+* 🧠 **Open-Weight Gemma 2B Intelligence**: Local language parsing via Ollama extracts deadlines, fixed meetings, priorities, and duration estimates.
+* 🛡️ **Human-in-the-Loop Review**: Extracted commitments are displayed on a clean review screen before touching your calendar.
+* ⏱️ **Deterministic Constraint Scheduling**: Mathematical placement algorithm locks non-negotiables (e.g., *"Lecture at 10:00 AM"*) and schedules floating tasks safely.
+* ☕ **Protected Restorative Breaks**: Automatically reserves 15-minute breaks after every 90 minutes of focused effort to combat cognitive exhaustion.
+* 🔄 **Adaptive Replanning with Zero Guilt**: One click informs the planner of delays. Downstream tasks shift automatically, hard deadlines remain protected, and explanations are reassuring.
+* 💾 **Dual-Mode Persistence**: Operates 100% offline using `localStorage`. Seamlessly syncs to MongoDB Atlas when a connection string is provided.
+* 🌙 **Calm Aesthetic**: Tailored dark-mode UI crafted with Tailwind CSS v4 and Lucide icons to reduce sensory strain.
 
 ---
 
-## Running Locally
+## 🔒 Privacy & Data Sovereignty Matrix
+
+| Component | Destination | Storage Type | Security / Privacy Boundary |
+| :--- | :---: | :---: | :--- |
+| **Gemma 2B Inference** | **Localhost** | RAM / Cache | **100% On-Device**. No prompts or transcripts ever leave your local machine. |
+| **Planner State & Tasks** | **Localhost** | `localStorage` | **100% Offline**. Stored in browser sandbox storage. |
+| **Voice Audio (Optional)** | **ElevenLabs API** | Ephemeral | Audio is streamed strictly for transcription over HTTPS via server proxy. No audio is persisted. |
+| **Database Sync (Optional)** | **MongoDB Atlas** | Encrypted TLS | Only active if `MONGODB_URI` is configured in `.env`. Server-side only; connection strings never reach the client. |
+
+---
+
+## 🛠️ Technology Stack
+
+```
+Frontend:       React 19  ·  TypeScript 6.0  ·  Tailwind CSS v4  ·  Vite 8  ·  Lucide Icons
+AI / NLP:       Google Gemma 2B  ·  Ollama  ·  Deterministic Regex Heuristic Engine
+Voice:          ElevenLabs Scribe API (v2) Server-Side Proxy
+Persistence:    MongoDB Atlas (Node Driver v7.7.0)  ·  Local-First localStorage
+Architecture:   Node.js  ·  Vite Middleware Server  ·  Docker / Render Ready
+```
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-* [Node.js](https://nodejs.org) (v20+ recommended)
-* [Ollama](https://ollama.com) (for local Gemma inference)
+* [Node.js](https://nodejs.org) (v20 or higher recommended)
+* [Ollama](https://ollama.com) (for local Gemma 2B inference)
+* *(Optional)* An ElevenLabs API key for voice transcription
+* *(Optional)* A MongoDB Atlas database cluster for cloud synchronization
+
+---
 
 ### 1. Clone & Install
 
@@ -156,74 +244,148 @@ cd HerDay
 npm install
 ```
 
+---
+
 ### 2. Start Local Gemma Model
 
+Install and run the lightweight `gemma2:2b` model locally via Ollama:
+
 ```bash
-# Pull and start the lightweight open-weight Gemma 2B model
 ollama run gemma2:2b
 ```
 
-### 3. Configure Environment (Optional)
+> **Note**: If you don't run Ollama, HerDay will automatically use its built-in **Local Heuristic Engine** with zero configuration!
+
+---
+
+### 3. Environment Configuration
+
+HerDay runs completely offline by default. To enable optional cloud sync and voice intake, create a `.env` file:
 
 ```bash
-# Copy example configuration
 cp .env.example .env
 ```
 
-* **Voice Input**: Add `ELEVENLABS_API_KEY=your_key` for ElevenLabs Scribe STT.
-* **Cloud Persistence**: Add `MONGODB_URI=your_atlas_uri` for MongoDB Atlas sync.
-* *Note: HerDay works 100% offline out-of-the-box with local heuristic extraction and localStorage without touching `.env`.*
+| Variable | Required | Default | Description |
+| :--- | :---: | :---: | :--- |
+| `ELEVENLABS_API_KEY` | Optional | `""` | ElevenLabs API key for high-accuracy voice transcription |
+| `MONGODB_URI` | Optional | `""` | MongoDB Atlas connection string for multi-device sync |
+| `OLLAMA_BASE_URL` | Optional | `http://localhost:11434` | Ollama local API base URL |
+| `GEMMA_MODEL` | Optional | `gemma2:2b` | Model name to invoke via Ollama |
+| `PORT` | Optional | `5173` | Server port |
 
-### 4. Start Development Server
+> ⚠️ **Security Guarantee**: Neither `MONGODB_URI` nor `ELEVENLABS_API_KEY` are prefixed with `VITE_`. They are handled exclusively server-side and never exposed to the browser client.
+
+---
+
+### 4. Run Development Server
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+Visit [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
-## Deploy to Render
+### 5. Production Server
 
-HerDay is pre-configured with a Render Blueprint (`render.yaml`) for one-click full-stack deployment:
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tribhu05/HerDay)
-
-### Quick Setup:
-1. Log into [dashboard.render.com](https://dashboard.render.com).
-2. Click **New +** $\rightarrow$ **Blueprint** (or **Web Service**).
-3. Connect your repository: `https://github.com/tribhu05/HerDay`.
-4. Render automatically applies the blueprint from `render.yaml`:
-   * **Runtime**: Node
-   * **Build Command**: `npm install && npm run build`
-   * **Start Command**: `npm start`
-5. *(Optional)* In **Environment Variables**, provide:
-   * `ELEVENLABS_API_KEY`: for voice input transcription
-   * `MONGODB_URI`: for MongoDB Atlas cloud sync
-6. Click **Apply** / **Deploy**. Render will build and launch your live service!
-
----
-
-## Verification & Testing
-
-HerDay includes a comprehensive, automated multi-suite test harness covering Gemma extraction, voice integration, MongoDB persistence, and deterministic scheduling:
+To build and run HerDay as a standalone production server:
 
 ```bash
-# Run complete test suite (Suites 1, 2, and 3)
-npm test
-
-# Run live integration test against running Ollama Gemma instance
-npm run test:live
-
-# Verify production build bundle
 npm run build
+npm start
 ```
 
 ---
 
-## Built During Hacktoberfest 2026
+## 🌐 Deployment Guide (Render)
 
-HerDay was developed for the **DEV Community Hacktoberfest 2026 Weekend Challenge: Build for a Friend**.
+HerDay includes a production-ready Render Blueprint (`render.yaml`).
 
-Built with genuine love, thoughtful empathy, and open-source technology for every friend who deserves a realistic, calm day.
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tribhu05/HerDay)
+
+### One-Click Setup Steps:
+1. Fork or push this repository to your GitHub account.
+2. Sign in to the [Render Dashboard](https://dashboard.render.com).
+3. Click **New +** $\rightarrow$ **Blueprint** and select your `HerDay` repository.
+4. Render automatically configures:
+   * **Build Command**: `npm install && npm run build`
+   * **Start Command**: `npm start`
+   * **Runtime**: Node.js
+5. *(Optional)* Add your `ELEVENLABS_API_KEY` and `MONGODB_URI` in the Render environment variables tab.
+6. Click **Apply** to deploy your live planner!
+
+---
+
+## 🧪 Testing & Quality Assurance
+
+HerDay includes a comprehensive, automated test suite validating the entire pipeline from end to end:
+
+```bash
+# Run all automated test suites (Suites 1, 2, and 3)
+npm test
+
+# Run live integration test against running Ollama Gemma 2B instance
+npm run test:live
+
+# Run voice workflow integration test
+npm run test:voice
+
+# Run type checking and production build bundle test
+npm run build
+```
+
+### Test Coverage Highlights:
+* **Suite 1: Heuristic Fallback & Parsing**: Verifies task duration parsing, deadline inference, and compound intent splitting without external dependencies.
+* **Suite 2: Deterministic Scheduler & Replanner**: Verifies fixed-time locks, working hour boundaries, automatic 15-minute break insertion, and delay propagation.
+* **Suite 3: Persistence & Fallback Resilience**: Verifies MongoDB Atlas connectivity, CRUD operations, and seamless graceful degradation to `localStorage` when offline.
+
+---
+
+## 📡 REST API Reference
+
+The local server exposes clean, lightweight persistence and utility endpoints:
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/voice/transcribe` | Proxies audio payload to ElevenLabs Scribe (`scribe_v2`) securely |
+| `GET` | `/api/db/status` | Reports MongoDB Atlas connection state (`Connected` / `Offline`) |
+| `GET` | `/api/db/tasks` | Retrieves all persisted tasks |
+| `POST` | `/api/db/tasks` | Saves or updates a task definition |
+| `PUT` | `/api/db/tasks/:id` | Updates an existing task by ID |
+| `DELETE` | `/api/db/tasks/:id` | Deletes a task by ID |
+| `GET` | `/api/db/plans` | Fetches active daily plans and generated time slots |
+| `POST` | `/api/db/plans` | Stores a generated schedule plan |
+| `GET` | `/api/db/preferences` | Fetches user settings (working hours, breaks, AI mode) |
+| `POST` | `/api/db/preferences` | Saves user preferences |
+| `GET` | `/api/db/replanning` | Retrieves historical replanning audit trail |
+| `POST` | `/api/db/replanning` | Records a replanning event and explanation |
+| `POST` | `/api/db/migrate` | Safely migrates local storage tasks into MongoDB Atlas |
+
+---
+
+## 🌐 Community Wisdom
+
+HerDay's architecture incorporates patterns established by the developer community on [DEV.to](https://dev.to):
+
+1. **Decoupling AI Inference from Business Logic**: The community emphasizes that while modern LLMs excel at semantic extraction, core operational logic (scheduling, constraint checking, database transactions) must remain strictly deterministic.
+   * Reference: [Decoupling the AI Stack for Production](https://dev.to) — highlights isolating inference engines behind validated schemas.
+2. **Local-First & On-Device AI Sovereignty**: By running small open-weight models (like Gemma 2B via Ollama) locally and coupling them with in-browser storage fallbacks, web applications achieve high privacy guarantees, air-gapped functionality, and zero API cost.
+   * Reference: [Building Privacy-First Web Apps with Local LLMs and Ollama](https://dev.to) — outlines local inference pipelines with web frontends.
+
+---
+
+## 🤝 Contributing & License
+
+Contributions, feedback, and ideas are warmly welcomed! Please open an issue or submit a pull request on GitHub.
+
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for details.
+
+---
+
+<div align="center">
+
+**Built with love, empathy, and open-source technology for Ananya and anyone navigating an overwhelming day.**
+
+</div>
