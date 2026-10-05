@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "start": "npx tsx server/prodServer.ts",
     "test": "npx tsx src/test/runAllTests.ts",
     "test:voice": "npx tsx src/test/verifyVoiceWorkflow.ts",
     "test:live": "npx tsx src/test/verifyLiveOllamaGemma.ts",

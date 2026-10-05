@@ -1,0 +1,20 @@
+services:
+  # HerDay Full-Stack Web Service on Render
+  - type: web
+    name: herday
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      # Optional secrets configured securely via Render Dashboard
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: MONGODB_URI
+        sync: false

@@ -8,6 +8,7 @@ A private, adaptive daily planner that transforms messy thoughts into realistic,
 [![Model](https://img.shields.io/badge/AI_Engine-Gemma_2B_(Open--Weight)-4285F4.svg)](https://ai.google.dev/gemma)
 [![Voice STT](https://img.shields.io/badge/Voice_STT-ElevenLabs_Scribe_(v2)-10b981.svg)](https://elevenlabs.io)
 [![Persistence](https://img.shields.io/badge/Storage-MongoDB_Atlas_%2F_Local--First-47A248.svg)](https://www.mongodb.com/atlas)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tribhu05/HerDay)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
@@ -180,6 +181,27 @@ npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+---
+
+## Deploy to Render
+
+HerDay is pre-configured with a Render Blueprint (`render.yaml`) for one-click full-stack deployment:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tribhu05/HerDay)
+
+### Quick Setup:
+1. Log into [dashboard.render.com](https://dashboard.render.com).
+2. Click **New +** $\rightarrow$ **Blueprint** (or **Web Service**).
+3. Connect your repository: `https://github.com/tribhu05/HerDay`.
+4. Render automatically applies the blueprint from `render.yaml`:
+   * **Runtime**: Node
+   * **Build Command**: `npm install && npm run build`
+   * **Start Command**: `npm start`
+5. *(Optional)* In **Environment Variables**, provide:
+   * `ELEVENLABS_API_KEY`: for voice input transcription
+   * `MONGODB_URI`: for MongoDB Atlas cloud sync
+6. Click **Apply** / **Deploy**. Render will build and launch your live service!
 
 ---
 
